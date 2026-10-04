@@ -1,0 +1,27 @@
+name: APK bouwen
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Project uitpakken
+        run: |
+          test -f BluupMobiel.zip || { echo "BluupMobiel.zip ontbreekt nog"; exit 1; }
+          unzip -o BluupMobiel.zip -d src
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+      - name: APK bouwen
+        working-directory: src
+        run: gradle assembleDebug --no-daemon --stacktrace
+      - uses: actions/upload-artifact@v4
+        with:
+          name: JetZon-BluupBox-apk
+          path: src/app/build/outputs/apk/debug/app-debug.apk
