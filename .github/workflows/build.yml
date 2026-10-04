@@ -9,8 +9,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Project uitpakken
         run: |
-          test -f BluupMobiel.zip || { echo "BluupMobiel.zip ontbreekt nog"; exit 1; }
-          unzip -o BluupMobiel.zip -d src
+          ZIP=$(ls -1 *.zip 2>/dev/null | sort | tail -n 1)
+          test -n "$ZIP" || { echo "Geen projectzip gevonden"; exit 1; }
+          echo "Bouwen uit $ZIP"
+          unzip -o "$ZIP" -d src
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
